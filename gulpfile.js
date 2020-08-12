@@ -10,6 +10,8 @@ var concat = require('gulp-concat');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 
+var nunjucksRender = require('gulp-nunjucks-render');
+
 // js file paths
 var utilJsPath = 'main/assets/js'; // util.js path - you may need to update this if including the framework as external node module
 var componentsJsPath = 'main/assets/js/components/*.js'; // component js files
@@ -53,6 +55,20 @@ gulp.task('scripts', function() {
   }));
 });
 
+gulp.task('nunjucks', function () {
+    // Gets .html and .nunjucks files in pages
+    return gulp.src('main/pages/**/*.+(html|njk)')
+    // Renders template with nunjucks
+    .pipe(nunjucksRender({
+        path: ['main/templates']
+        }))
+    // output files in app folder
+    .pipe(gulp.dest('main'))
+    .pipe(browserSync.reload({
+        stream: true
+    }));
+});
+
 gulp.task('browserSync', gulp.series(function (done) {
   browserSync.init({
     server: {
@@ -63,8 +79,8 @@ gulp.task('browserSync', gulp.series(function (done) {
   done();
 }));
 
-gulp.task('watch', gulp.series(['browserSync', 'sass', 'scripts'], function () {
-  gulp.watch('main/*.html', gulp.series(reload));
+gulp.task('watch', gulp.series(['browserSync', 'sass', 'scripts', 'nunjucks'], function () {
+  gulp.watch(['main/pages/*.html','main/templates/**/*.html'], gulp.series('nunjucks'));
   gulp.watch('main/assets/css/**/*.scss', gulp.series(['sass']));
   gulp.watch(componentsJsPath, gulp.series(['scripts']));
 }));
