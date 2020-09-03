@@ -2,4 +2,4 @@
 
 # codyhouse-builder
 
-a personal setup for getting codyhouse fromework up and running with nujucks
+a personal setup for getting codyhouse framework up and running with nujucks
